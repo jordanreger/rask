@@ -21,11 +21,15 @@ while (true) {
         })();
 
         if(path === "/"){
-          await request.respondWith(
-            new Response(`${path}`, {
-              "status": 200,
-            }),
-          );
+          let home = Deno.readFile("./index.html");
+
+          let res = new Response(await home, {
+            headers: {
+              "content-type": "text/html; charset=UTF-8",
+            },
+          });
+
+          await request.respondWith(res);
         }
       }
     })();
