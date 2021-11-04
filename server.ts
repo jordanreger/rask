@@ -1,4 +1,10 @@
-const server = Deno.listen({ port: 42069 });
+import { parse } from 'https://deno.land/std/flags/mod.ts';
+
+const { args } = Deno;
+const DEFAULT_PORT = 42069;
+const argPort = parse(args).port;
+
+const server = Deno.listen({ port: argPort ? Number(argPort) : DEFAULT_PORT });
 console.log("→ running");
 
 while (true) {
