@@ -27,7 +27,19 @@ while (true) {
         })();
 
         if(path === "/"){
-          let home = Deno.readFile("./index.html");
+          let home = Deno.readFile("./src/index.html");
+
+          let res = new Response(await home, {
+            headers: {
+              "content-type": "text/html; charset=UTF-8",
+            },
+          });
+
+          await request.respondWith(res);
+        }
+
+        else if(path === "/test"){
+          let home = Deno.readFile("./src/test.html");
 
           let res = new Response(await home, {
             headers: {
