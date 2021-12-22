@@ -15,12 +15,12 @@ async function handler(req: Request): Promise<any> {
     // PAGES
     case route('/x/.', path):
       f = true, r = "";
-      file = Deno.readFile("./src/index.html");
+      file = "/x/*";
       ct = "text/html; charset=UTF-8";
       break;
     case route('/x', path):
       f = true, r = "";
-      file = "test";
+      file = "/x";
       ct = "text/html; charset=UTF-8";
       break;
 
