@@ -1,48 +1,30 @@
-import { serve } from "https://deno.land/std@0.114.0/http/server.ts";
-import { route } from "./router.ts";
+import { serve } from "https://deno.land/std/http/server.ts";
 
 async function handler(req: Request): Promise<any> {
-  let path = (function(){
-    let url = req.url.split("/"), path = "";
-    url.splice(0, 3);
-    for(let i = 0; i < url.length; i++){path = path.concat(`/${url[i]}`);}
-    return path;
-  })();
+  let url = new URL(req.url);
+  let path = url.pathname, params = new URLSearchParams(url.search);
+  const route = (route:string) => { let regexRoute = new RegExp(route, "gmi"); if(regexRoute.test(path)){ return path } else { return null }}
+  const file = async (fp:string) => { let d = new TextDecoder("utf-8"); return d.decode(await Deno.readFile(fp))}
 
-  let file, ct, f, r;
+  let tr, rb, ct = "";
 
-  switch(true){
-    // PAGES
-    case route('/x/.', path):
-      f = true, r = "";
-      file = "/x/*";
-      ct = "text/html; charset=UTF-8";
-      break;
-    case route('/x', path):
-      f = true, r = "";
-      file = "/x";
-      ct = "text/html; charset=UTF-8";
+  switch(path){
+    case '/':
+      tr = true, rb = await file("./index.html"), ct = "text/html; charset=UTF-8";
       break;
 
     default:
-      f = true, r = "";
-      file = "404";
-      ct = "text/html; charset=UTF-8";
+      tr = true, rb = "404", ct = "text/html; charset=UTF-8";
   }
 
   let res;
 
-  if(f){
-    res = new Response(await file, {
-      headers: {
-        "content-type": ct,
-      },
-    });
+  if(tr){
+    res = new Response(await rb, { headers: { "content-type": ct } });
   } else {
-    res = Response.redirect(r, 302);
+    res = Response.redirect(rb, 302);
   }
-
   return res;
 }
 
-await serve(handler, { addr: ":4242" });
+await serve(handler);
